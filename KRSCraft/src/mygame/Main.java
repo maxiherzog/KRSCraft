@@ -16,6 +16,7 @@ public class Main extends SimpleApplication {
 
     public static void main(String[] args) {
         Main app = new Main();
+        System.out.println("Dennis was here");
         app.start();
     }
 
