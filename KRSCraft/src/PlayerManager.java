@@ -14,10 +14,8 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 
@@ -34,10 +32,17 @@ public class PlayerManager extends AbstractAppState implements ActionListener{
     public  Player            player;
     private InputManager inputManager;
     
+    private final static float WALK_SPEED_FORWARDS  = 4F;
+    private final static float WALK_SPEED_SIDEWARDS = 3F;  
+    
     private Vector3f walkDirection = new Vector3f();
     private Vector3f camDir        = new Vector3f();
     private Vector3f camLeft       = new Vector3f();
-    public boolean left = false, right = false, up = false, down = false, space = false;
+    public boolean left  = false;
+    public boolean right = false;
+    public boolean up    = false;
+    public boolean down  = false;
+    public boolean space = false;
   
     @Override
     public void initialize(AppStateManager stateManager, Application app){
@@ -69,14 +74,15 @@ public class PlayerManager extends AbstractAppState implements ActionListener{
         player               = new Player();
         player.isDead        = false;
         player.model         = new Node();
-        player.playerControl = new BetterCharacterControl(1f, 2.5f, 500f);
+        player.playerControl = new BetterCharacterControl(0.2f, 1f, 10f);
         //player.playerControl.setGravity(new Vector3f(0, -9.81f, 0));
+        player.playerControl.setJumpForce(new Vector3f(0, 20F, 0));
         player.attachChild(player.model);
         player.addControl(player.playerControl);
         this.app.getRootNode().attachChild(player);
-        player.model.setLocalTranslation(0f, 2.5f, 0f);
+        player.model.setLocalTranslation(0f, 1f, 0f);
         physics.getPhysicsSpace().add(player.playerControl);
-        player.playerControl.warp(new Vector3f(15f, 5f, 10f));
+        player.playerControl.warp(new Vector3f(0f, 0f, 0f));
     }
 
     @Override
@@ -110,8 +116,11 @@ public class PlayerManager extends AbstractAppState implements ActionListener{
      */
     @Override
     public void update(float tpf){
-        camDir.set(this.app.getCamera().getDirection()).multLocal(10.0f, 0.0f, 10.0f);
-        camLeft.set(this.app.getCamera().getLeft()).multLocal(10.0f);
+        camDir.set(this.app.getCamera().getDirection()).multLocal(
+                WALK_SPEED_FORWARDS,
+                0.0f,
+                WALK_SPEED_SIDEWARDS);
+        camLeft.set(this.app.getCamera().getLeft()).multLocal(WALK_SPEED_SIDEWARDS);
         walkDirection.set(0, 0, 0);
         
         if (left)  walkDirection.addLocal(camLeft);

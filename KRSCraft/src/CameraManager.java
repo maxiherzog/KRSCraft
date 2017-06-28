@@ -29,6 +29,7 @@ public class CameraManager extends AbstractAppState{
      */
     public void initCamera(){
         cam = new ChaseCamera(this.app.getCamera(), player.model, this.app.getInputManager());
+        cam.setDragToRotate(false);
         cam.setMinDistance(1);
         cam.setMaxDistance(1);
         cam.setInvertVerticalAxis(true);
